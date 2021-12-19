@@ -51,17 +51,15 @@ class GUI:
             self.grid = Grid((r, c), self.difficulty)
 
         self.grid.uncover((r, c))
-        if self.grid.checkLost((r, c)):
+        if self.grid.lost:
             pygame.display.set_caption("You lost!")
-            self.grid.lost()
             self.draw()
             pygame.time.delay(2000)
             pygame.display.set_caption(self.title)
             self.initGame()
 
-        elif self.grid.checkWon((r, c)):
+        elif self.grid.won:
             pygame.display.set_caption("You won!")
-            self.grid.revealAll()
             self.draw()
             pygame.time.delay(2000)
             pygame.display.set_caption(self.title)
@@ -77,9 +75,8 @@ class GUI:
             self.grid = Grid((r, c), self.difficulty)
             
         self.grid.flag((r, c))
-        if self.grid.checkWon((r, c)):
+        if self.grid.won:
             pygame.display.set_caption("You won!")
-            self.grid.revealAll()
             self.draw()
             pygame.time.delay(2000)
             pygame.display.set_caption(self.title)

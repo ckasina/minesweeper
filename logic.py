@@ -14,6 +14,8 @@ class Grid:
 
         self.mine = 9
         self.mineHit = 10
+        self.lost = False
+        self.won = False
 
         for r in range(self.rows):
             self.grid.append([])
@@ -52,6 +54,15 @@ class Grid:
                 for r1, c1 in self.getSurround(pos):
                     self.uncover((r1, c1))
 
+            elif self.grid[r][c] == self.mine:
+                self.lost = True
+                self.showMines()
+
+            elif self.grid[r][c] < self.mine and\
+                len(self.uncovered) == self.rows*self.cols - len(self.minePositions):
+                    self.won = True
+                    self.revealAll()
+
 
     def flag(self, pos):
         if pos in self.uncovered:
@@ -63,24 +74,12 @@ class Grid:
         else:
             self.flagged.append(pos)
 
-    def checkLost(self, pos):
-        r, c = pos
-        return pos in self.uncovered and self.grid[r][c] == self.mine
 
-    def checkWon(self, pos):
-        if self.checkLost(pos):
-            return False
-
-        elif set(self.flagged) == set(self.minePositions):
-            return True
-
-        elif len(self.uncovered) == self.rows*self.cols - len(self.minePositions):
-            return True
-
-    def lost(self):
+    def showMines(self):
         for (r, c) in self.minePositions:
             if (r, c) not in self.flagged:
                 self.grid[r][c] = self.mineHit
+                self.uncovered.append((r, c))
 
     def revealAll(self):
         for r in range(self.rows):

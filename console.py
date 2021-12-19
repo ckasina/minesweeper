@@ -5,8 +5,11 @@ hard = (16, 30, 99)
 difficulty = easy
 grid = None
 while True:
+    print()
     rc = input("Enter row, col: ")
+    print()
     action = input("(F)lag or (U)ncover: ")
+    print()
     r, c = int(rc[0]), int(rc[1])
     if grid == None:
         grid = Grid((r, c), difficulty)
@@ -20,11 +23,11 @@ while True:
 
 
     print(grid)
-    if grid.checkLost((r, c)):
+    if grid.lost:
         print("LOST!")
         break
 
-    elif grid.checkWon((r, c)):
+    elif grid.won:
         print("WON!")
         break
 
