@@ -40,3 +40,8 @@ Start the program
 
 ![Screenshot](screenshot.png)
 
+
+## Acknowledgements
+
+ - [Minesweeper sprites I used](https://opengameart.org/content/minesweeper-tile-set-lazarus)
+
