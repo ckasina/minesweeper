@@ -38,7 +38,8 @@ Start the program
 *NOT FOR COMMERCIAL USE*: If you have the intention of using all / any portion of my code for commerical use please contact me and request permission
 ## Screenshots
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshots/1.png)
+![Screenshot](screenshots/2.png)
 
 
 ## Acknowledgements
