@@ -29,7 +29,7 @@ Install dependencies
 Start the program
 
 ```bash
-  python gui.py
+  python main.py
 ```
 
 

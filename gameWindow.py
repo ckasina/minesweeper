@@ -2,7 +2,7 @@ import pygame
 import os.path as path
 from logic import Grid
 
-class GUI:
+class gameWindow:
     def __init__(self):
         pygame.init()
         easy = (9, 9, 10)
@@ -46,22 +46,28 @@ class GUI:
         self.font = pygame.font.Font(pygame.font.get_default_font(), int(self.width / 20))
         self.statusBG = (255, 255, 255)
         self.statusFG = (0, 0, 0)
+        self.pushedDown = []
 
 
     def initSpeed(self):
         self.clock = pygame.time.Clock()
-        self.fps = 60
+        self.fps = 120
 
     def endOfGame(self):
         self.updateDisplay()
         pygame.time.delay(2000)
         self.initGame()
 
-
-    def leftClick(self):
+    def getMouseRowCol(self):
         x, y = pygame.mouse.get_pos()
         r = y // self.squareSize
         c = x // self.squareSize
+
+        return (r, c)
+
+    def leftMouseUp(self):
+        self.pushedDown = []
+        r, c = self.getMouseRowCol()
 
         if self.grid == None:
             self.grid = Grid((r, c), self.difficulty)
@@ -71,10 +77,35 @@ class GUI:
             self.endOfGame()
 
 
-    def rightClick(self):
-        x, y = pygame.mouse.get_pos()
-        r = y // self.squareSize
-        c = x // self.squareSize
+    def leftMouseDown(self):
+        r, c = self.getMouseRowCol()
+        if self.grid == None:
+            self.pushedDown = [(r, c)]
+            return
+
+        if (r, c) not in self.grid.uncovered + self.grid.flagged:
+            self.pushedDown = [(r, c)]
+
+        else:
+            self.pushedDown = []
+
+    def middleMouseDown(self):
+        self.pushedDown = []
+        pos = self.getMouseRowCol()
+        if self.grid == None:
+            self.grid = Grid(None, self.difficulty)
+
+
+        cells = self.grid.getSurround(pos) + [pos]
+        for r, c in cells:
+            if (r, c) not in self.grid.uncovered + self.grid.flagged:
+                self.pushedDown.append((r, c))
+        
+        if self.grid.first == None:
+            self.grid = None
+
+    def rightMouseDown(self):
+        r, c = self.getMouseRowCol()
 
         if self.grid == None:
             self.grid = Grid((r, c), self.difficulty)
@@ -88,11 +119,23 @@ class GUI:
             if event.type == pygame.QUIT:
                 exit()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[0]:
-                self.leftClick()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.leftMouseUp()
+
+                elif event.button == 2:
+                    self.pushedDown = []
 
             elif event.type == pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pressed()[2]:
-                self.rightClick()
+                self.rightMouseDown()
+
+            elif event.type in [pygame.MOUSEBUTTONDOWN, 
+            pygame.MOUSEMOTION] and pygame.mouse.get_pressed()[0]:
+                self.leftMouseDown()
+
+            elif event.type in [pygame.MOUSEBUTTONDOWN, 
+            pygame.MOUSEMOTION] and pygame.mouse.get_pressed()[1]:
+                self.middleMouseDown()
 
     def updateGridSurf(self):
         for r in range(self.rows):
@@ -101,13 +144,21 @@ class GUI:
                 y = r * self.squareSize
                 
                 if self.grid == None:
-                    self.gridSurf.blit(self.images["unexplored"], (x, y))
+                    if (r, c) not in self.pushedDown:
+                        self.gridSurf.blit(self.images["unexplored"], (x, y))
+
+                    else:
+                        self.gridSurf.blit(self.images["0"], (x, y))
+
                 
                 elif (r, c) in self.grid.flagged:
                     self.gridSurf.blit(self.images["flag"], (x, y))
                     
                 elif (r, c) in self.grid.uncovered:
                     self.gridSurf.blit(self.images[str(self.grid.getCell(r, c))], (x, y))
+
+                elif (r, c) in self.pushedDown:
+                    self.gridSurf.blit(self.images["0"], (x, y))
 
                 else:
                     self.gridSurf.blit(self.images["unexplored"], (x, y))
@@ -149,4 +200,3 @@ class GUI:
             self.updateDisplay()
             self.handleEvents()
 
-gui = GUI()

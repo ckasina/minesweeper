@@ -16,6 +16,7 @@ class Grid:
         self.mineHit = 10
         self.lost = False
         self.won = False
+        self.first = first
 
         for r in range(self.rows):
             self.grid.append([])
@@ -24,7 +25,10 @@ class Grid:
 
                 if first != (r, c):
                     positions.append((r, c))
-        
+
+        if first == None:
+            return
+
         self.minePositions = random.sample(positions, self.noOfMines)
         for (r, c) in self.minePositions:
             self.grid[r][c] = self.mine
